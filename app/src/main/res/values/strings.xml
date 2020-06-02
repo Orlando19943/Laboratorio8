@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Laboratorio8</string>
+    <string name="buscar">Buscar</string>
+    <string name="palabra_clave">Palabra clave</string>
+    <string name="puntos_minimos">Puntos minimos</string>
+    <string name="autor">Autor</string>
+</resources>
