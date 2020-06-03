@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.laboratorio8.network.HackerNewsApi
 import com.example.laboratorio8.network.HackerNewsUser
-import com.example.laboratorio8.title.NewsApiStatus
+import com.example.laboratorio8.network.NewsApiStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -38,18 +38,18 @@ class NewsViewModel (private val keyWord: String,private val points: String,priv
         _status.value = NewsApiStatus.START
     }
 
-    fun openRepoUrl(hackerNews: HackerNewsUser){
-        _currentHackerNew.value = hackerNews
+    fun openRepoUrl(hackerNews2: HackerNewsUser){
+        _currentHackerNew.value = hackerNews2
     }
 
     private fun getNews(){
         coroutineScope.launch {
-            val newsDeferred = HackerNewsApi.retrofitService.getPropertiesAsync(keyWord,points,author)
+            val newsDeferred = HackerNewsApi.retrofitService.getHackerNewsAsync(keyWord,points,author)
             try {
                 _status.value = NewsApiStatus.LOADING
                 val news = newsDeferred.await()
                 _status.value = NewsApiStatus.DONE
-                _hackerNews.value = listOf(news)
+                _hackerNews.value = news
             } catch (e: Exception){
                 _status.value = NewsApiStatus.ERROR
                 _hackerNews.value = emptyList()

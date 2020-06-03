@@ -1,22 +1,20 @@
 package com.example.laboratorio8.title
 
+import android.os.Debug
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.laboratorio8.network.HackerNewsApi
 import com.example.laboratorio8.network.HackerNewsUser
+import com.example.laboratorio8.network.NewsApiStatus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import java.lang.Exception
 
-enum class NewsApiStatus{
-    START,
-    LOADING,
-    ERROR,
-    DONE
-}
+
 
 class TitleViewModel : ViewModel() {
 
@@ -27,12 +25,6 @@ class TitleViewModel : ViewModel() {
     private val _viewNews = MutableLiveData<Boolean>()
     val viewNews: LiveData<Boolean>
         get () = _viewNews
-    fun viewNews(){
-        _viewNews.value = true
-    }
-    fun viewNewsComplete(){
-        _viewNews.value = false
-    }
 
     val keyWord = MutableLiveData<String>()
 
@@ -46,17 +38,24 @@ class TitleViewModel : ViewModel() {
     private val _newsUser = MutableLiveData<HackerNewsUser>()
     val newsUser:LiveData<HackerNewsUser>
         get() = _newsUser
-    init {
-        _status.value = NewsApiStatus.START
-    }
+
     // Create a Coroutine scope using a job to be able to cancel when needed
     private var viewModelJob = Job()
 
     // the Coroutine runs using the Main (UI) dispatcher
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
+
+    init {
+        startStatus()
+    }
+
+    fun startStatus(){
+        _status.value = NewsApiStatus.START
+    }
+
     fun search(){
         coroutineScope.launch {
-            val newsUserDeferred = HackerNewsApi.retrofitService.getPropertiesAsync(keyWord.value,points.value,author.value)
+            val newsUserDeferred = HackerNewsApi.retrofitService.getPropertiesAsync(keyWord.value,"story",points.value,author.value)
             try {
                 _status.value =
                     NewsApiStatus.LOADING
@@ -69,5 +68,12 @@ class TitleViewModel : ViewModel() {
 
             }
         }
+    }
+    fun actionViewNews() {
+        _viewNews.value = true
+    }
+
+    fun viewNewsComplete() {
+        _viewNews.value = false
     }
 }
